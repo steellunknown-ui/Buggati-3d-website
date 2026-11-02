@@ -1,0 +1,22 @@
+# node_modules
+node_modules/
+
+# Next.js build output
+.next/
+out/
+
+# env files
+.env
+.env.local
+.env.*.local
+
+# raw source frames (large)
+../public/frame_*.jpg
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
