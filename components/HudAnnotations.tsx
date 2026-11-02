@@ -66,7 +66,7 @@ export default function HudAnnotations({ scrollPct }: Props) {
         return (
           <div
             key={a.id}
-            className="fixed z-30 pointer-events-none transition-all duration-300"
+            className="fixed z-30 pointer-events-none transition-all duration-300 hidden md:block"
             style={{
               left: a.x,
               top:  a.y,

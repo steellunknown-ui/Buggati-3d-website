@@ -15,7 +15,7 @@ export default function BottomHud({ fps, frameIndex, loaded, total, scrollPct }:
 
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 z-40 flex items-end justify-between px-6 md:px-12 pb-6 pointer-events-none"
+      className="fixed bottom-0 left-0 right-0 z-40 hidden md:flex items-end justify-between px-6 md:px-12 pb-6 pointer-events-none"
       style={{ fontFamily: "var(--font-ibm-plex-mono)" }}
     >
       {/* Left: Frame & Performance Telemetry */}

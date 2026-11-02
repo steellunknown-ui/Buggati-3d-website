@@ -74,6 +74,10 @@ body {
   transform: translate(-50%, -50%);
 }
 
+@media (hover: none) and (pointer: coarse) {
+  .cursor-dot, .cursor-ring { display: none !important; }
+}
+
 /* ─── Film grain overlay ─────────────────────────────────────────────── */
 .grain-overlay {
   position: fixed;

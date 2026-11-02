@@ -121,12 +121,13 @@ export default function Home() {
 
       {/* ======================================================== */}
       {/* SECTION OVERLAYS (Scroll Driven Fixed HUD Presentation) */}
+      {/* Hidden on mobile to keep Bugatti 100% visible & clean   */}
       {/* ======================================================== */}
 
       {/* SECTION 00: HERO TITLE */}
       <section
         style={getSectionStyle(0.0, 0.04, 0.12, 0.18)}
-        className="fixed inset-0 z-20 flex items-center justify-start px-6 md:px-16 pointer-events-none"
+        className="fixed inset-0 z-20 hidden md:flex items-center justify-start px-6 md:px-16 pointer-events-none"
       >
         <div className="max-w-2xl">
           <div className="flex items-center gap-2.5 text-cyan-300 font-mono text-xs tracking-widest uppercase mb-4">
@@ -168,7 +169,7 @@ export default function Home() {
       {/* SECTION 01: AERODYNAMICS */}
       <section
         style={getSectionStyle(0.20, 0.26, 0.38, 0.44)}
-        className="fixed inset-0 z-20 flex items-center justify-end px-6 md:px-16 pointer-events-none"
+        className="fixed inset-0 z-20 hidden md:flex items-center justify-end px-6 md:px-16 pointer-events-none"
       >
         <div className="max-w-md bg-[#060D1E]/85 backdrop-blur-xl p-6 sm:p-8 border border-cyan-400/40 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.9),0_0_25px_rgba(0,194,255,0.15)]">
           <div className="text-xs font-mono tracking-widest text-cyan-300 flex items-center gap-2 mb-3">
@@ -193,7 +194,7 @@ export default function Home() {
       {/* SECTION 02: W16 ENGINE */}
       <section
         style={getSectionStyle(0.46, 0.52, 0.64, 0.70)}
-        className="fixed inset-0 z-20 flex items-center justify-start px-6 md:px-16 pointer-events-none"
+        className="fixed inset-0 z-20 hidden md:flex items-center justify-start px-6 md:px-16 pointer-events-none"
       >
         <div className="max-w-md bg-[#060D1E]/85 backdrop-blur-xl p-6 sm:p-8 border border-cyan-400/40 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.9),0_0_25px_rgba(0,194,255,0.15)]">
           <div className="text-xs font-mono tracking-widest text-cyan-300 flex items-center gap-2 mb-3">
@@ -218,7 +219,7 @@ export default function Home() {
       {/* SECTION 03: CHASSIS & BRAKES */}
       <section
         style={getSectionStyle(0.72, 0.78, 0.88, 0.94)}
-        className="fixed inset-0 z-20 flex items-center justify-end px-6 md:px-16 pointer-events-none"
+        className="fixed inset-0 z-20 hidden md:flex items-center justify-end px-6 md:px-16 pointer-events-none"
       >
         <div className="max-w-md bg-[#060D1E]/85 backdrop-blur-xl p-6 sm:p-8 border border-cyan-400/40 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.9),0_0_25px_rgba(0,194,255,0.15)]">
           <div className="text-xs font-mono tracking-widest text-cyan-300 flex items-center gap-2 mb-3">
