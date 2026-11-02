@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Maximize2, Minimize2, Sliders, Menu, X } from "lucide-react";
 
 interface Props {
   onSpecsOpen: () => void;
@@ -8,156 +9,176 @@ interface Props {
 
 export default function Navigation({ onSpecsOpen, scrollPct }: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    const handleFsChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener("fullscreenchange", handleFsChange);
+    return () => document.removeEventListener("fullscreenchange", handleFsChange);
+  }, []);
+
+  // Keyboard shortcut 'F' to toggle fullscreen
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "f" || e.key === "F") {
+        if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+        toggleFullscreen();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  const toggleFullscreen = async () => {
+    try {
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen();
+      } else {
+        await document.exitFullscreen();
+      }
+    } catch {
+      // ignore
+    }
+  };
+
+  const isScrolled = scrollPct > 2;
 
   return (
     <nav
-      className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-10"
+      className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 transition-all duration-500"
       style={{
-        height: 64,
-        borderBottom: "1px solid transparent",
-        background: scrollPct > 2 ? "rgba(7,7,10,0.65)" : "transparent",
-        backdropFilter: scrollPct > 2 ? "blur(24px)" : "none",
-        transition: "background 0.4s ease, backdrop-filter 0.4s ease",
+        height: 72,
+        background: isScrolled
+          ? "rgba(4, 8, 18, 0.75)"
+          : "linear-gradient(to bottom, rgba(4, 8, 18, 0.7), transparent)",
+        backdropFilter: isScrolled ? "blur(20px)" : "none",
+        borderBottom: isScrolled ? "1px solid rgba(0, 194, 255, 0.2)" : "1px solid transparent",
+        boxShadow: isScrolled ? "0 4px 30px rgba(0, 140, 255, 0.08)" : "none",
       }}
     >
-      {/* Wordmark */}
-      <div className="flex items-center gap-3">
-        <div
-          style={{
-            width: 28, height: 28,
-            border: "1.5px solid var(--accent)",
-            borderRadius: 2,
-            display: "flex", alignItems: "center", justifyContent: "center",
-          }}
-        >
-          <span
-            style={{
-              fontFamily: "var(--font-ibm-plex-mono)",
-              fontSize: "0.55rem",
-              color: "var(--accent)",
-              letterSpacing: "0.05em",
-            }}
-          >
+      {/* Brand: Bugatti French Racing Blue emblem */}
+      <div className="flex items-center gap-3 group cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
+        <div className="relative flex items-center justify-center w-9 h-9 rounded-md bg-gradient-to-br from-blue-600 via-cyan-500 to-blue-700 shadow-[0_0_20px_rgba(0,194,255,0.5)] border border-cyan-300/40">
+          <span className="font-mono text-xs font-black text-white tracking-widest">
             EB
           </span>
+          <div className="absolute inset-0 rounded-md bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity" />
         </div>
-        <div className="flex flex-col gap-0">
-          <span
-            style={{
-              fontWeight: 900,
-              fontSize: "0.85rem",
-              letterSpacing: "0.06em",
-              textTransform: "uppercase",
-              color: "var(--ink)",
-              lineHeight: 1.1,
-            }}
-          >
-            Bugatti
-          </span>
-          <span className="label-caps" style={{ fontSize: "0.42rem", letterSpacing: "0.24em" }}>
-            Bolide EB.01
+        <div className="flex flex-col">
+          <div className="flex items-center gap-1.5">
+            <span className="text-base font-black tracking-tight text-white drop-shadow-[0_0_12px_rgba(255,255,255,0.6)]">
+              BUGATTI
+            </span>
+            <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-400/30">
+              BOLIDE
+            </span>
+          </div>
+          <span className="font-mono text-[9px] uppercase tracking-[0.25em] text-cyan-200/70">
+            W16 // 1600 HP TRACK MONSTER
           </span>
         </div>
       </div>
 
-      {/* Desktop links */}
+      {/* Center Navigation Links */}
       <div className="hidden md:flex items-center gap-8">
-        {["The Machine", "Powertrain", "Aero", "Specifications"].map((l, i) => (
+        {[
+          { label: "EXPLODED VIEW", pct: 0 },
+          { label: "AERO CARBON",   pct: 25 },
+          { label: "W16 ENGINE",    pct: 52 },
+          { label: "CHASSIS",       pct: 80 },
+        ].map((item) => (
           <button
-            key={l}
-            onClick={l === "Specifications" ? onSpecsOpen : undefined}
-            style={{
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              fontFamily: "var(--font-ibm-plex-mono)",
-              fontSize: "0.58rem",
-              letterSpacing: "0.16em",
-              textTransform: "uppercase",
-              color: "var(--dim)",
-              transition: "color 0.2s",
-              padding: 0,
+            key={item.label}
+            onClick={() => {
+              const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+              window.scrollTo({ top: (item.pct / 100) * maxScroll, behavior: "smooth" });
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = "var(--ink)")}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "var(--dim)")}
+            className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/70 hover:text-cyan-300 transition-colors py-1 relative group"
           >
-            {l}
+            {item.label}
+            <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-gradient-to-r from-cyan-400 to-blue-500 group-hover:w-full transition-all duration-300 shadow-[0_0_8px_#00E5FF]" />
           </button>
         ))}
       </div>
 
-      {/* CTA */}
+      {/* Right Controls: Fullscreen Toggle + Technical Specs */}
       <div className="hidden md:flex items-center gap-4">
+        {/* Fullscreen Button */}
+        <button
+          onClick={toggleFullscreen}
+          title="Toggle Fullscreen (Press F)"
+          className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-cyan-400/30 bg-cyan-950/30 hover:bg-cyan-500/20 text-cyan-200 hover:text-white transition-all shadow-[0_0_15px_rgba(0,194,255,0.15)] group"
+        >
+          {isFullscreen ? (
+            <Minimize2 size={13} className="text-cyan-300 group-hover:rotate-90 transition-transform" />
+          ) : (
+            <Maximize2 size={13} className="text-cyan-300 group-hover:scale-110 transition-transform" />
+          )}
+          <span className="font-mono text-[10px] tracking-widest font-semibold">
+            {isFullscreen ? "EXIT FULLSCREEN" : "FULLSCREEN"}
+          </span>
+          <span className="font-mono text-[9px] px-1 py-0.2 rounded bg-white/10 text-cyan-300">
+            F
+          </span>
+        </button>
+
+        {/* Specs Drawer Trigger */}
         <button
           onClick={onSpecsOpen}
-          style={{
-            background: "none",
-            border: "1px solid var(--line)",
-            padding: "7px 16px",
-            cursor: "pointer",
-            fontFamily: "var(--font-ibm-plex-mono)",
-            fontSize: "0.55rem",
-            letterSpacing: "0.18em",
-            textTransform: "uppercase",
-            color: "var(--dim)",
-            borderRadius: 3,
-            transition: "all 0.25s ease",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = "var(--accent)";
-            e.currentTarget.style.color = "var(--accent)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = "var(--line)";
-            e.currentTarget.style.color = "var(--dim)";
-          }}
+          className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-mono text-[11px] tracking-widest font-bold shadow-[0_0_20px_rgba(0,194,255,0.4)] hover:shadow-[0_0_30px_rgba(0,194,255,0.7)] transition-all hover:scale-105"
         >
-          Full Specs
+          <Sliders size={13} className="text-white animate-pulse" />
+          <span>SPECIFICATIONS</span>
         </button>
       </div>
 
-      {/* Mobile menu toggle */}
+      {/* Mobile Hamburger */}
       <button
-        className="md:hidden flex flex-col gap-1.5 p-2"
+        className="md:hidden p-2 text-cyan-300"
         onClick={() => setMenuOpen(!menuOpen)}
-        style={{ background: "none", border: "none", cursor: "pointer" }}
       >
-        {[0, 1, 2].map((i) => (
-          <div key={i} style={{ width: 22, height: 1, background: "var(--dim)" }} />
-        ))}
+        {menuOpen ? <X size={22} /> : <Menu size={22} />}
       </button>
 
-      {/* Mobile dropdown */}
+      {/* Mobile Menu Dropdown */}
       {menuOpen && (
-        <div
-          style={{
-            position: "absolute",
-            top: 64,
-            left: 0,
-            right: 0,
-            background: "var(--surface)",
-            borderBottom: "1px solid var(--line)",
-            padding: "20px 24px",
-            display: "flex",
-            flexDirection: "column",
-            gap: 16,
-          }}
-        >
-          {["The Machine", "Powertrain", "Aero", "Specifications"].map((l) => (
+        <div className="absolute top-[72px] left-0 right-0 bg-[#060B18]/95 border-b border-cyan-400/30 backdrop-blur-2xl p-6 flex flex-col gap-4 md:hidden shadow-2xl">
+          {[
+            { label: "EXPLODED VIEW", pct: 0 },
+            { label: "AERO CARBON",   pct: 25 },
+            { label: "W16 ENGINE",    pct: 52 },
+            { label: "CHASSIS",       pct: 80 },
+          ].map((item) => (
             <button
-              key={l}
-              onClick={() => { if (l === "Specifications") onSpecsOpen(); setMenuOpen(false); }}
-              style={{
-                background: "none", border: "none", cursor: "pointer",
-                fontFamily: "var(--font-ibm-plex-mono)",
-                fontSize: "0.65rem", letterSpacing: "0.16em",
-                textTransform: "uppercase", color: "var(--dim)",
-                textAlign: "left", padding: 0,
+              key={item.label}
+              onClick={() => {
+                const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+                window.scrollTo({ top: (item.pct / 100) * maxScroll, behavior: "smooth" });
+                setMenuOpen(false);
               }}
+              className="font-mono text-xs tracking-widest text-left text-white/80 hover:text-cyan-300 py-1"
             >
-              {l}
+              {item.label}
             </button>
           ))}
+          <div className="pt-4 border-t border-white/10 flex flex-col gap-3">
+            <button
+              onClick={() => { toggleFullscreen(); setMenuOpen(false); }}
+              className="flex items-center justify-center gap-2 py-2.5 rounded-lg border border-cyan-400/40 bg-cyan-950/40 text-cyan-200 font-mono text-xs tracking-widest"
+            >
+              <Maximize2 size={14} />
+              <span>{isFullscreen ? "EXIT FULLSCREEN" : "FULLSCREEN MODE"}</span>
+            </button>
+            <button
+              onClick={() => { onSpecsOpen(); setMenuOpen(false); }}
+              className="flex items-center justify-center gap-2 py-2.5 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-mono text-xs tracking-widest font-bold shadow-lg"
+            >
+              <Sliders size={14} />
+              <span>TECHNICAL SPECIFICATIONS</span>
+            </button>
+          </div>
         </div>
       )}
     </nav>

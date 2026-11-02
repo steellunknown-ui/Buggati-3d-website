@@ -1,11 +1,10 @@
 "use client";
-import { useState, useEffect } from "react";
 
 const STAGES = [
-  { pct: 0,   label: "ASSEMBLED",  sub: "Complete configuration" },
-  { pct: 25,  label: "CLOSURES",   sub: "Exterior panels" },
-  { pct: 52,  label: "POWERTRAIN", sub: "W16 quad-turbo" },
-  { pct: 78,  label: "SKELETON",   sub: "Monocoque chassis" },
+  { pct: 0,   label: "ASSEMBLED",  sub: "Complete Aerodynamic Shell" },
+  { pct: 25,  label: "CLOSURES",   sub: "Carbon Skin Decoupling" },
+  { pct: 52,  label: "POWERTRAIN", sub: "8.0L Quad-Turbo W16 Core" },
+  { pct: 78,  label: "SKELETON",   sub: "Aerospace CFRP Monocoque" },
 ];
 
 interface Props { scrollPct: number }
@@ -15,52 +14,66 @@ export default function VerticalRail({ scrollPct }: Props) {
 
   return (
     <div
-      className="fixed right-6 top-1/2 -translate-y-1/2 z-50 hidden lg:flex flex-col items-end gap-0"
-      style={{ pointerEvents: "none" }}
+      className="fixed right-8 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col items-end gap-1 pointer-events-none"
+      style={{ fontFamily: "var(--font-ibm-plex-mono)" }}
     >
       {STAGES.map((s, i) => {
         const isActive = i === activeIdx;
         const isPassed = i < activeIdx;
+
         return (
-          <div key={s.label} className="flex items-center gap-3">
-            <div className="flex flex-col items-end gap-0.5" style={{ opacity: isActive ? 1 : isPassed ? 0.5 : 0.25 }}>
+          <div key={s.label} className="flex items-center gap-4 py-2">
+            {/* Label and Subtext */}
+            <div
+              className={`flex flex-col items-end transition-all duration-500 ${
+                isActive
+                  ? "opacity-100 translate-x-0"
+                  : isPassed
+                  ? "opacity-60 translate-x-1"
+                  : "opacity-30 translate-x-2"
+              }`}
+            >
               {isActive && (
-                <span className="label-caps text-accent" style={{ fontSize: "0.48rem", letterSpacing: "0.2em" }}>{s.sub}</span>
+                <span className="text-[9px] uppercase tracking-[0.2em] font-bold text-cyan-300 drop-shadow-[0_0_8px_rgba(0,212,255,0.8)]">
+                  {s.sub}
+                </span>
               )}
               <span
-                className="label-caps"
-                style={{
-                  fontSize: "0.5rem",
-                  color: isActive ? "var(--ink)" : "var(--dim)",
-                  letterSpacing: "0.18em",
-                }}
+                className={`text-[11px] font-black tracking-[0.2em] uppercase transition-colors ${
+                  isActive
+                    ? "text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]"
+                    : isPassed
+                    ? "text-cyan-200/80"
+                    : "text-white/40"
+                }`}
               >
                 {s.label}
               </span>
             </div>
 
-            {/* Track dot */}
+            {/* Glowing Interactive Node & Connecting Line */}
             <div className="flex flex-col items-center">
               <div
-                style={{
-                  width: isActive ? 5 : 3,
-                  height: isActive ? 5 : 3,
-                  borderRadius: "50%",
-                  background: isActive ? "var(--accent)" : isPassed ? "var(--dim)" : "var(--faint)",
-                  boxShadow: isActive ? "0 0 8px var(--accent)" : "none",
-                  transition: "all 0.4s ease",
-                }}
-              />
+                className={`relative flex items-center justify-center rounded-full transition-all duration-500 ${
+                  isActive
+                    ? "w-4 h-4 bg-cyan-400 shadow-[0_0_20px_#00E5FF,0_0_40px_rgba(0,212,255,0.8)]"
+                    : isPassed
+                    ? "w-2.5 h-2.5 bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.6)]"
+                    : "w-2 h-2 bg-white/20"
+                }`}
+              >
+                {isActive && (
+                  <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
+                )}
+              </div>
+
               {i < STAGES.length - 1 && (
                 <div
-                  style={{
-                    width: 1,
-                    height: 40,
-                    background: isPassed
-                      ? "linear-gradient(to bottom, var(--accent), var(--dim))"
-                      : "var(--line)",
-                    transition: "background 0.4s ease",
-                  }}
+                  className={`w-[1.5px] h-10 transition-colors duration-500 ${
+                    isPassed
+                      ? "bg-gradient-to-b from-blue-500 to-cyan-400 shadow-[0_0_6px_#00E5FF]"
+                      : "bg-white/10"
+                  }`}
                 />
               )}
             </div>
